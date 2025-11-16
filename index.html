@@ -5,409 +5,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sinónimos y Antónimos</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 10px;
-            overflow-y: auto;
-        }
-
-        .container {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            max-width: 90vw;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            position: relative;
-            z-index: 10;
-            margin: 10px auto;
-        }
-
-        h1 {
-            color: #667eea;
-            text-align: center;
-            margin-bottom: 15px;
-            font-size: clamp(1.5em, 4vw, 2.5em);
-        }
-
-        .remaining {
-            text-align: center;
-            font-size: clamp(1.5em, 3vw, 2em);
-            font-weight: bold;
-            padding: 15px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-            background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .star-icon {
-            font-size: 1.5em;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-        }
-
-        .remaining.bounce {
-            animation: bounce 0.5s;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        .question-card {
-            background: linear-gradient(135deg, #a8e6cf 0%, #74b9ff 100%);
-            padding: clamp(20px, 3vw, 40px);
-            border-radius: 15px;
-            margin-bottom: 25px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .words {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 25px;
-            gap: clamp(15px, 3vw, 30px);
-            flex-wrap: nowrap;
-        }
-
-        .word {
-            font-size: clamp(1.5em, 4vw, 2.5em);
-            font-weight: bold;
-            color: #2d3436;
-            padding: clamp(10px, 2vw, 20px) clamp(15px, 3vw, 30px);
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-            animation: slideIn 0.5s;
-            white-space: nowrap;
-            min-width: fit-content;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .arrow {
-            font-size: clamp(2em, 5vw, 3em);
-            color: #2d3436;
-            flex-shrink: 0;
-        }
-
-        .question {
-            text-align: center;
-            font-size: clamp(1.2em, 3vw, 1.5em);
-            color: #2d3436;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-
-        .buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            flex: 1;
-            min-width: 140px;
-            padding: clamp(15px, 2vw, 20px);
-            font-size: clamp(1.1em, 2.5vw, 1.5em);
-            font-weight: bold;
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        .btn-sinonimo {
-            background: linear-gradient(135deg, #55efc4 0%, #00b894 100%);
-            color: white;
-        }
-
-        .btn-antonimo {
-            background: linear-gradient(135deg, #ff7675 0%, #d63031 100%);
-            color: white;
-        }
-
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-        }
-
-        .btn:active {
-            transform: translateY(-1px);
-        }
-
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .feedback {
-            text-align: center;
-            font-size: clamp(1.2em, 3vw, 1.5em);
-            font-weight: bold;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
-            display: none;
-            animation: fadeIn 0.5s;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .feedback.correct {
-            background: #55efc4;
-            color: #00b894;
-            display: block;
-        }
-
-        .feedback.incorrect {
-            background: #ff7675;
-            color: #d63031;
-            display: block;
-        }
-
-        .celebration {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1000;
-        }
-
-        .confetti, .star, .serpentine {
-            position: absolute;
-            animation: fall 2s linear forwards;
-        }
-
-        @keyframes fall {
-            to {
-                transform: translateY(100vh) rotate(360deg);
-                opacity: 0;
-            }
-        }
-
-        .sad-emoji {
-            position: absolute;
-            font-size: 3em;
-            animation: shake 0.5s;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
-        }
-
-        .champion-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-            animation: fadeIn 0.5s;
-            padding: 20px;
-        }
-
-        .champion-modal.show {
-            display: flex;
-        }
-
-        .champion-content {
-            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
-            padding: clamp(20px, 5vw, 40px);
-            border-radius: 20px;
-            text-align: center;
-            max-width: 90vw;
-            animation: zoomIn 0.5s;
-        }
-
-        @keyframes zoomIn {
-            from { transform: scale(0); }
-            to { transform: scale(1); }
-        }
-
-        .champion-content h2 {
-            font-size: clamp(2em, 6vw, 3em);
-            color: #d63031;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .champion-content p {
-            font-size: clamp(1.1em, 3vw, 1.5em);
-            color: #2d3436;
-            margin-bottom: 15px;
-            line-height: 1.5;
-        }
-
-        .trophy {
-            font-size: clamp(3em, 10vw, 5em);
-            animation: rotate 2s infinite;
-        }
-
-        @keyframes rotate {
-            0%, 100% { transform: rotate(-10deg); }
-            50% { transform: rotate(10deg); }
-        }
-
-        .start-screen {
-            display: flex;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 3000;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        .start-screen.hidden {
-            display: none;
-        }
-
-        .start-content {
-            background: linear-gradient(135deg, #a8e6cf 0%, #74b9ff 100%);
-            padding: clamp(20px, 5vw, 40px);
-            border-radius: 20px;
-            text-align: center;
-            max-width: 90vw;
-            animation: zoomIn 0.5s;
-            position: relative;
-        }
-
-        .start-content h2 {
-            font-size: clamp(1.8em, 5vw, 2.5em);
-            color: #2d3436;
-            margin-bottom: 20px;
-        }
-
-        .start-content p {
-            font-size: clamp(1em, 2.5vw, 1.3em);
-            color: #2d3436;
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
-
-        .reward-box {
-            background: #ffeaa7;
-            padding: 20px;
-            border-radius: 15px;
-            margin: 20px 0;
-            border: 3px dashed #fdcb6e;
-        }
-
-        .reward-box h3 {
-            color: #d63031;
-            font-size: clamp(1.3em, 3vw, 1.8em);
-            margin-bottom: 10px;
-        }
-
-        .reward-input {
-            width: 100%;
-            padding: 15px;
-            font-size: clamp(1em, 2.5vw, 1.2em);
-            border: 2px solid #fdcb6e;
-            border-radius: 10px;
-            margin-top: 10px;
-            text-align: center;
-        }
-
-        .btn-start {
-            background: linear-gradient(135deg, #55efc4 0%, #00b894 100%);
-            color: white;
-            font-size: clamp(1.3em, 3vw, 1.8em);
-            font-weight: bold;
-            padding: clamp(15px, 3vw, 20px) clamp(30px, 5vw, 40px);
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            transition: all 0.3s;
-            position: relative;
-            margin-top: 20px;
-        }
-
-        .btn-start:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-        }
-
-        .pointer-hand {
-            position: absolute;
-            bottom: -50px;
-            right: -20px;
-            font-size: clamp(2em, 6vw, 4em);
-            animation: pointing 1s infinite;
-        }
-
-        @keyframes pointing {
-            0%, 100% { transform: translateY(0) rotate(-20deg); }
-            50% { transform: translateY(-10px) rotate(-20deg); }
-        }
-
-        @media (max-width: 600px) {
-            .words {
-                gap: 10px;
-            }
-            .word {
-                padding: 8px 12px;
-            }
-            .buttons {
-                flex-direction: column;
-            }
-            .btn {
-                width: 100%;
-            }
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Arial', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 10px; overflow-y: auto; }
+        .container { background: white; border-radius: 20px; padding: 20px; max-width: 90vw; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); position: relative; z-index: 10; margin: 10px auto; }
+        h1 { color: #667eea; text-align: center; margin-bottom: 15px; font-size: clamp(1.5em, 4vw, 2.5em); }
+        .remaining { text-align: center; font-size: clamp(1.5em, 3vw, 2em); font-weight: bold; padding: 15px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: transform 0.3s; background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%); color: white; display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 20px; }
+        .star-icon { font-size: 1.5em; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+        .remaining.bounce { animation: bounce 0.5s; }
+        @keyframes bounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+        .question-card { background: linear-gradient(135deg, #a8e6cf 0%, #74b9ff 100%); padding: clamp(20px, 3vw, 40px); border-radius: 15px; margin-bottom: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .words { display: flex; justify-content: center; align-items: center; margin-bottom: 25px; gap: clamp(15px, 3vw, 30px); flex-wrap: nowrap; }
+        .word { font-size: clamp(1.5em, 4vw, 2.5em); font-weight: bold; color: #2d3436; padding: clamp(10px, 2vw, 20px) clamp(15px, 3vw, 30px); background: white; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.2); animation: slideIn 0.5s; white-space: nowrap; min-width: fit-content; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        .arrow { font-size: clamp(2em, 5vw, 3em); color: #2d3436; flex-shrink: 0; }
+        .question { text-align: center; font-size: clamp(1.2em, 3vw, 1.5em); color: #2d3436; font-weight: bold; margin-bottom: 20px; }
+        .buttons { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .btn { flex: 1; min-width: 140px; padding: clamp(15px, 2vw, 20px); font-size: clamp(1.1em, 2.5vw, 1.5em); font-weight: bold; border: none; border-radius: 15px; cursor: pointer; transition: all 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .btn-sinonimo { background: linear-gradient(135deg, #55efc4 0%, #00b894 100%); color: white; }
+        .btn-antonimo { background: linear-gradient(135deg, #ff7675 0%, #d63031 100%); color: white; }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+        .btn:active { transform: translateY(-1px); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .feedback { text-align: center; font-size: clamp(1.2em, 3vw, 1.5em); font-weight: bold; padding: 15px; border-radius: 10px; margin-top: 20px; display: none; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .feedback.correct { background: #55efc4; color: #00b894; display: block; }
+        .feedback.incorrect { background: #ff7675; color: #d63031; display: block; }
+        .score-container { display: flex; gap: 20px; justify-content: center; margin-top: 25px; flex-wrap: wrap; }
+        .score-box { padding: 15px 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); text-align: center; min-width: 140px; }
+        .score-correct { background: linear-gradient(135deg, #55efc4 0%, #00b894 100%); }
+        .score-wrong { background: linear-gradient(135deg, #ff7675 0%, #d63031 100%); }
+        .score-label { font-size: clamp(1.1em, 2.5vw, 1.3em); color: white; font-weight: bold; margin-bottom: 5px; }
+        .score-number { font-size: clamp(2em, 5vw, 3em); color: white; font-weight: bold; }
+        .celebration { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1000; }
+        .confetti, .star, .serpentine { position: absolute; animation: fall 2s linear forwards; }
+        @keyframes fall { to { transform: translateY(100vh) rotate(360deg); opacity: 0; } }
+        .sad-emoji { position: absolute; font-size: 3em; animation: shake 0.5s; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+        .champion-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; animation: fadeIn 0.5s; padding: 20px; }
+        .champion-modal.show { display: flex; }
+        .champion-content { background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%); padding: clamp(20px, 5vw, 40px); border-radius: 20px; text-align: center; max-width: 90vw; animation: zoomIn 0.5s; }
+        @keyframes zoomIn { from { transform: scale(0); } to { transform: scale(1); } }
+        .champion-content h2 { font-size: clamp(2em, 6vw, 3em); color: #d63031; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+        .champion-content p { font-size: clamp(1.1em, 3vw, 1.5em); color: #2d3436; margin-bottom: 15px; line-height: 1.5; }
+        .trophy { font-size: clamp(3em, 10vw, 5em); animation: rotate 2s infinite; }
+        @keyframes rotate { 0%, 100% { transform: rotate(-10deg); } 50% { transform: rotate(10deg); } }
+        .start-screen { display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; justify-content: center; align-items: center; padding: 20px; overflow-y: auto; }
+        .start-screen.hidden { display: none; }
+        .start-content { background: linear-gradient(135deg, #a8e6cf 0%, #74b9ff 100%); padding: clamp(20px, 5vw, 40px); border-radius: 20px; text-align: center; max-width: 90vw; animation: zoomIn 0.5s; position: relative; }
+        .start-content h2 { font-size: clamp(1.8em, 5vw, 2.5em); color: #2d3436; margin-bottom: 20px; }
+        .start-content p { font-size: clamp(1em, 2.5vw, 1.3em); color: #2d3436; margin-bottom: 20px; line-height: 1.6; }
+        .reward-box { background: #ffeaa7; padding: 20px; border-radius: 15px; margin: 20px 0; border: 3px dashed #fdcb6e; }
+        .reward-box h3 { color: #d63031; font-size: clamp(1.3em, 3vw, 1.8em); margin-bottom: 10px; }
+        .reward-input { width: 100%; padding: 15px; font-size: clamp(1em, 2.5vw, 1.2em); border: 2px solid #fdcb6e; border-radius: 10px; margin-top: 10px; text-align: center; }
+        .btn-start { background: linear-gradient(135deg, #55efc4 0%, #00b894 100%); color: white; font-size: clamp(1.3em, 3vw, 1.8em); font-weight: bold; padding: clamp(15px, 3vw, 20px) clamp(30px, 5vw, 40px); border: none; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: all 0.3s; position: relative; margin-top: 20px; }
+        .btn-start:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+        .pointer-hand { position: absolute; bottom: -50px; right: -20px; font-size: clamp(2em, 6vw, 4em); animation: pointing 1s infinite; }
+        @keyframes pointing { 0%, 100% { transform: translateY(0) rotate(-20deg); } 50% { transform: translateY(-10px) rotate(-20deg); } }
+        @media (max-width: 600px) { .words { gap: 10px; } .word { padding: 8px 12px; } .buttons { flex-direction: column; } .btn { width: 100%; } }
     </style>
 </head>
 <body>
@@ -415,482 +70,61 @@
         <div class="start-content">
             <h2>🎯 Sinónimos y Antónimos</h2>
             <p>¡Aprende jugando!<br>Tienes 100 preguntas para responder.</p>
-            
             <div class="reward-box">
                 <h3>🎁 ¡TU PREMIO! 🎁</h3>
                 <p>Si completas el juego, mamá o papá te dará:</p>
-                <input type="text" 
-                       id="rewardInput" 
-                       class="reward-input" 
-                       placeholder="Escribe aquí el premio (ej: un helado, ir al parque...)"
-                       maxlength="50">
+                <input type="text" id="rewardInput" class="reward-input" placeholder="Escribe aquí el premio (ej: un helado, ir al parque...)" maxlength="50">
             </div>
-            
-            <button class="btn-start" onclick="startGame()">
-                ¡EMPEZAR! 🚀
-                <div class="pointer-hand">👇</div>
-            </button>
+            <button class="btn-start" onclick="startGame()">¡EMPEZAR! 🚀<div class="pointer-hand">👇</div></button>
         </div>
     </div>
-
     <div class="celebration" id="celebration"></div>
-    
     <div class="champion-modal" id="championModal">
         <div class="champion-content">
             <div class="trophy">🏆</div>
             <h2>¡CAMPEÓN!</h2>
             <p>¡Completaste las 100 preguntas!</p>
             <p id="rewardMessage" style="font-size: clamp(1.3em, 4vw, 1.8em); color: #d63031; margin-top: 20px;">🎁</p>
-            <button class="btn btn-sinonimo" onclick="resetGame()" style="width: 100%; margin-top: 20px;">
-                🔄 Jugar de nuevo
-            </button>
+            <button class="btn btn-sinonimo" onclick="resetGame()" style="width: 100%; margin-top: 20px;">🔄 Jugar de nuevo</button>
         </div>
     </div>
-
     <div class="container">
         <h1>🎯 Sinónimos y Antónimos</h1>
-        
-        <div class="remaining" id="remainingContainer">
-            <span class="star-icon">⭐</span>
-            <span>Preguntas restantes: <span id="remaining">100</span></span>
-        </div>
-
+        <div class="remaining" id="remainingContainer"><span class="star-icon">⭐</span><span>Preguntas restantes: <span id="remaining">100</span></span></div>
         <div class="question-card">
-            <div class="words">
-                <div class="word" id="word1">---</div>
-                <div class="arrow">↔️</div>
-                <div class="word" id="word2">---</div>
-            </div>
-            
+            <div class="words"><div class="word" id="word1">---</div><div class="arrow">↔️</div><div class="word" id="word2">---</div></div>
             <div class="question">¿Son sinónimos o antónimos?</div>
-            
             <div class="buttons">
-                <button class="btn btn-sinonimo" id="btnSinonimo" onclick="checkAnswer('sinonimo')">
-                    ✅ Sinónimos
-                </button>
-                <button class="btn btn-antonimo" id="btnAntonimo" onclick="checkAnswer('antonimo')">
-                    ❌ Antónimos
-                </button>
+                <button class="btn btn-sinonimo" id="btnSinonimo" onclick="checkAnswer('sinonimo')">✅ Sinónimos</button>
+                <button class="btn btn-antonimo" id="btnAntonimo" onclick="checkAnswer('antonimo')">❌ Antónimos</button>
             </div>
         </div>
-
         <div class="feedback" id="feedback"></div>
+        <div class="score-container">
+            <div class="score-box score-correct"><div class="score-label">✅ Acertadas</div><div class="score-number" id="correctCount">0</div></div>
+            <div class="score-box score-wrong"><div class="score-label">❌ Erróneas</div><div class="score-number" id="wrongCount">0</div></div>
+        </div>
     </div>
-
     <script>
-        const pairs = [
-            // NIVEL 1: Sinónimos MUY FÁCILES
-            {word1: "papá", word2: "padre", type: "sinonimo"},
-            {word1: "mamá", word2: "madre", type: "sinonimo"},
-            {word1: "niño", word2: "chico", type: "sinonimo"},
-            {word1: "casa", word2: "hogar", type: "sinonimo"},
-            {word1: "coche", word2: "auto", type: "sinonimo"},
-            {word1: "perro", word2: "can", type: "sinonimo"},
-            {word1: "gato", word2: "minino", type: "sinonimo"},
-            {word1: "feliz", word2: "contento", type: "sinonimo"},
-            {word1: "bonito", word2: "lindo", type: "sinonimo"},
-            {word1: "grande", word2: "enorme", type: "sinonimo"},
-            
-            // NIVEL 2: Sinónimos FÁCILES
-            {word1: "pequeño", word2: "chico", type: "sinonimo"},
-            {word1: "amigo", word2: "compañero", type: "sinonimo"},
-            {word1: "regalo", word2: "obsequio", type: "sinonimo"},
-            {word1: "libro", word2: "texto", type: "sinonimo"},
-            {word1: "mirar", word2: "observar", type: "sinonimo"},
-            {word1: "hablar", word2: "conversar", type: "sinonimo"},
-            {word1: "caminar", word2: "andar", type: "sinonimo"},
-            {word1: "comer", word2: "alimentarse", type: "sinonimo"},
-            {word1: "saltar", word2: "brincar", type: "sinonimo"},
-            {word1: "correr", word2: "trotar", type: "sinonimo"},
-            
-            // NIVEL 3: Sinónimos MEDIOS
-            {word1: "triste", word2: "apenado", type: "sinonimo"},
-            {word1: "alegría", word2: "gozo", type: "sinonimo"},
-            {word1: "miedo", word2: "temor", type: "sinonimo"},
-            {word1: "comenzar", word2: "iniciar", type: "sinonimo"},
-            {word1: "terminar", word2: "finalizar", type: "sinonimo"},
-            {word1: "rápido", word2: "veloz", type: "sinonimo"},
-            {word1: "hermoso", word2: "bello", type: "sinonimo"},
-            {word1: "limpio", word2: "aseado", type: "sinonimo"},
-            {word1: "sucio", word2: "mugriento", type: "sinonimo"},
-            {word1: "rico", word2: "sabroso", type: "sinonimo"},
-            
-            // NIVEL 4: Sinónimos DIFÍCILES
-            {word1: "fuerte", word2: "robusto", type: "sinonimo"},
-            {word1: "inteligente", word2: "listo", type: "sinonimo"},
-            {word1: "valiente", word2: "corajudo", type: "sinonimo"},
-            {word1: "enfermo", word2: "malo", type: "sinonimo"},
-            {word1: "sano", word2: "saludable", type: "sinonimo"},
-            {word1: "viejo", word2: "anciano", type: "sinonimo"},
-            {word1: "joven", word2: "juvenil", type: "sinonimo"},
-            {word1: "delgado", word2: "flaco", type: "sinonimo"},
-            {word1: "gordo", word2: "grueso", type: "sinonimo"},
-            {word1: "reír", word2: "carcajear", type: "sinonimo"},
-            
-            // NIVEL 5: Sinónimos MUY DIFÍCILES
-            {word1: "llorar", word2: "sollozar", type: "sinonimo"},
-            {word1: "tirar", word2: "lanzar", type: "sinonimo"},
-            {word1: "coger", word2: "agarrar", type: "sinonimo"},
-            {word1: "jugar", word2: "divertirse", type: "sinonimo"},
-            {word1: "dormir", word2: "descansar", type: "sinonimo"},
-            {word1: "frío", word2: "helado", type: "sinonimo"},
-            {word1: "mojado", word2: "húmedo", type: "sinonimo"},
-            {word1: "seco", word2: "árido", type: "sinonimo"},
-            {word1: "fácil", word2: "simple", type: "sinonimo"},
-            {word1: "difícil", word2: "complicado", type: "sinonimo"},
-            
-            // NIVEL 1: Antónimos MUY FÁCILES
-            {word1: "alto", word2: "bajo", type: "antonimo"},
-            {word1: "grande", word2: "pequeño", type: "antonimo"},
-            {word1: "día", word2: "noche", type: "antonimo"},
-            {word1: "bueno", word2: "malo", type: "antonimo"},
-            {word1: "bonito", word2: "feo", type: "antonimo"},
-            {word1: "caliente", word2: "frío", type: "antonimo"},
-            {word1: "largo", word2: "corto", type: "antonimo"},
-            {word1: "lleno", word2: "vacío", type: "antonimo"},
-            {word1: "limpio", word2: "sucio", type: "antonimo"},
-            {word1: "nuevo", word2: "viejo", type: "antonimo"},
-            
-            // NIVEL 2: Antónimos FÁCILES
-            {word1: "abrir", word2: "cerrar", type: "antonimo"},
-            {word1: "subir", word2: "bajar", type: "antonimo"},
-            {word1: "entrar", word2: "salir", type: "antonimo"},
-            {word1: "arriba", word2: "abajo", type: "antonimo"},
-            {word1: "dentro", word2: "fuera", type: "antonimo"},
-            {word1: "cerca", word2: "lejos", type: "antonimo"},
-            {word1: "rápido", word2: "lento", type: "antonimo"},
-            {word1: "fuerte", word2: "débil", type: "antonimo"},
-            {word1: "gordo", word2: "delgado", type: "antonimo"},
-            {word1: "duro", word2: "blando", type: "antonimo"},
-            
-            // NIVEL 3: Antónimos MEDIOS
-            {word1: "alegre", word2: "triste", type: "antonimo"},
-            {word1: "reír", word2: "llorar", type: "antonimo"},
-            {word1: "amor", word2: "odio", type: "antonimo"},
-            {word1: "verdad", word2: "mentira", type: "antonimo"},
-            {word1: "claro", word2: "oscuro", type: "antonimo"},
-            {word1: "ruidoso", word2: "silencioso", type: "antonimo"},
-            {word1: "fácil", word2: "difícil", type: "antonimo"},
-            {word1: "delante", word2: "detrás", type: "antonimo"},
-            {word1: "derecha", word2: "izquierda", type: "antonimo"},
-            {word1: "ganar", word2: "perder", type: "antonimo"},
-            
-            // NIVEL 4: Antónimos DIFÍCILES
-            {word1: "empezar", word2: "terminar", type: "antonimo"},
-            {word1: "comprar", word2: "vender", type: "antonimo"},
-            {word1: "dar", word2: "recibir", type: "antonimo"},
-            {word1: "preguntar", word2: "responder", type: "antonimo"},
-            {word1: "hablar", word2: "callar", type: "antonimo"},
-            {word1: "dormir", word2: "despertar", type: "antonimo"},
-            {word1: "mojado", word2: "seco", type: "antonimo"},
-            {word1: "dulce", word2: "amargo", type: "antonimo"},
-            {word1: "rico", word2: "pobre", type: "antonimo"},
-            {word1: "pesado", word2: "ligero", type: "antonimo"},
-            
-            // NIVEL 5: Antónimos MUY DIFÍCILES
-            {word1: "primera", word2: "última", type: "antonimo"},
-            {word1: "ancho", word2: "estrecho", type: "antonimo"},
-            {word1: "temprano", word2: "tarde", type: "antonimo"},
-            {word1: "joven", word2: "anciano", type: "antonimo"},
-            {word1: "vivo", word2: "muerto", type: "antonimo"},
-            {word1: "paz", word2: "guerra", type: "antonimo"},
-            {word1: "orden", word2: "desorden", type: "antonimo"},
-            {word1: "valiente", word2: "cobarde", type: "antonimo"},
-            {word1: "generoso", word2: "egoísta", type: "antonimo"},
-            {word1: "lleno", word2: "hambriento", type: "antonimo"}
-        ];
-
-        // Variables del juego
-        let remaining = 100;
-        let currentPair = null;
-        let rewardText = "";
-        let answeredQuestions = 0;
-        let usedPairs = new Set(); // Para evitar repetir preguntas
-
-        // Organizar pares por tipo para poder seleccionar otro del mismo tipo al fallar
-        const sinonimos = pairs.filter(pair => pair.type === "sinonimo");
-        const antonimos = pairs.filter(pair => pair.type === "antonimo");
-
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        const audioCtx = new AudioContext();
-
-        function startGame() {
-            rewardText = document.getElementById('rewardInput').value.trim();
-            if (!rewardText) {
-                alert('¡Por favor escribe el premio antes de empezar!');
-                return;
-            }
-            
-            document.getElementById('startScreen').classList.add('hidden');
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-            loadNewQuestion();
-        }
-
-        function playSuccessSound() {
-            const notes = [523.25, 659.25, 783.99];
-            notes.forEach((freq, i) => {
-                setTimeout(() => {
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.frequency.value = freq;
-                    osc.type = 'sine';
-                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-                    osc.start(audioCtx.currentTime);
-                    osc.stop(audioCtx.currentTime + 0.3);
-                }, i * 100);
-            });
-        }
-
-        function playErrorSound() {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.frequency.setValueAtTime(400, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.5);
-            osc.type = 'sawtooth';
-            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-            osc.start(audioCtx.currentTime);
-            osc.stop(audioCtx.currentTime + 0.5);
-        }
-
-        function playChampionSound() {
-            const melody = [523.25, 587.33, 659.25, 783.99, 880.00, 1046.50];
-            melody.forEach((freq, i) => {
-                setTimeout(() => {
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.frequency.value = freq;
-                    osc.type = 'sine';
-                    gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
-                    osc.start(audioCtx.currentTime);
-                    osc.stop(audioCtx.currentTime + 0.4);
-                }, i * 150);
-            });
-        }
-
-        function speak(text) {
-            if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'es-ES';
-                utterance.rate = 0.9;
-                utterance.pitch = 1.2;
-                speechSynthesis.speak(utterance);
-            }
-        }
-
-        function createConfetti() {
-            const cel = document.getElementById('celebration');
-            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#feca57', '#ff9ff3', '#54a0ff'];
-            for (let i = 0; i < 30; i++) {
-                setTimeout(() => {
-                    const conf = document.createElement('div');
-                    conf.className = 'confetti';
-                    conf.style.left = Math.random() * 100 + '%';
-                    conf.style.background = colors[Math.floor(Math.random() * colors.length)];
-                    conf.style.width = '10px';
-                    conf.style.height = '10px';
-                    conf.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-                    cel.appendChild(conf);
-                    setTimeout(() => conf.remove(), 2000);
-                }, i * 30);
-            }
-        }
-
-        function createSerpentines() {
-            const cel = document.getElementById('celebration');
-            const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6'];
-            for (let i = 0; i < 50; i++) {
-                setTimeout(() => {
-                    const serp = document.createElement('div');
-                    serp.className = 'serpentine';
-                    serp.style.left = Math.random() * 100 + '%';
-                    serp.style.width = '5px';
-                    serp.style.height = (Math.random() * 30 + 20) + 'px';
-                    serp.style.background = colors[Math.floor(Math.random() * colors.length)];
-                    serp.style.borderRadius = '10px';
-                    cel.appendChild(serp);
-                    setTimeout(() => serp.remove(), 2000);
-                }, i * 20);
-            }
-        }
-
-        function createStars() {
-            const cel = document.getElementById('celebration');
-            for (let i = 0; i < 15; i++) {
-                setTimeout(() => {
-                    const star = document.createElement('div');
-                    star.className = 'star';
-                    star.textContent = '⭐';
-                    star.style.left = Math.random() * 100 + '%';
-                    star.style.fontSize = (Math.random() * 20 + 20) + 'px';
-                    cel.appendChild(star);
-                    setTimeout(() => star.remove(), 2000);
-                }, i * 50);
-            }
-        }
-
-        function createSadEmojis() {
-            const cel = document.getElementById('celebration');
-            const emojis = ['😢', '😔', '😞', '💔'];
-            for (let i = 0; i < 5; i++) {
-                setTimeout(() => {
-                    const emoji = document.createElement('div');
-                    emoji.className = 'sad-emoji';
-                    emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-                    emoji.style.left = Math.random() * 80 + 10 + '%';
-                    emoji.style.top = Math.random() * 50 + 25 + '%';
-                    cel.appendChild(emoji);
-                    setTimeout(() => emoji.remove(), 500);
-                }, i * 100);
-            }
-        }
-
-        function getRandomPair() {
-            // Si ya hemos usado todas las preguntas, reiniciamos el set
-            if (usedPairs.size >= pairs.length) {
-                usedPairs.clear();
-            }
-            
-            // Buscar un par que no se haya usado
-            let randomIndex;
-            do {
-                randomIndex = Math.floor(Math.random() * pairs.length);
-            } while (usedPairs.has(randomIndex));
-            
-            usedPairs.add(randomIndex);
-            return pairs[randomIndex];
-        }
-
-        function getRandomPairByType(type) {
-            const group = type === 'sinonimo' ? sinonimos : antonimos;
-            
-            // Si ya hemos usado todas las preguntas de este tipo, reiniciamos
-            const usedPairsInGroup = new Set();
-            for (let index of usedPairs) {
-                if (pairs[index].type === type) {
-                    usedPairsInGroup.add(index);
-                }
-            }
-            
-            if (usedPairsInGroup.size >= group.length) {
-                // Eliminar solo los pares de este tipo del set usado
-                for (let index of usedPairsInGroup) {
-                    usedPairs.delete(index);
-                }
-            }
-            
-            // Buscar un par del tipo especificado que no se haya usado
-            let randomIndex;
-            do {
-                randomIndex = Math.floor(Math.random() * group.length);
-                const pairIndex = pairs.indexOf(group[randomIndex]);
-                if (!usedPairs.has(pairIndex)) {
-                    usedPairs.add(pairIndex);
-                    return group[randomIndex];
-                }
-            } while (true);
-        }
-
-        function loadNewQuestion() {
-            if (answeredQuestions >= 100) {
-                showChampionModal();
-                return;
-            }
-            
-            currentPair = getRandomPair();
-            document.getElementById('word1').textContent = currentPair.word1;
-            document.getElementById('word2').textContent = currentPair.word2;
-            document.getElementById('feedback').style.display = 'none';
-            document.getElementById('feedback').className = 'feedback';
-            document.getElementById('btnSinonimo').disabled = false;
-            document.getElementById('btnAntonimo').disabled = false;
-        }
-
-        function checkAnswer(answer) {
-            document.getElementById('btnSinonimo').disabled = true;
-            document.getElementById('btnAntonimo').disabled = true;
-
-            const feedback = document.getElementById('feedback');
-            const remainingContainer = document.getElementById('remainingContainer');
-            
-            if (answer === currentPair.type) {
-                // Respuesta correcta
-                answeredQuestions++;
-                remaining--;
-                feedback.textContent = '¡Correcto! 🎉';
-                feedback.className = 'feedback correct';
-                
-                playSuccessSound();
-                speak('¡Correcto! ¡Muy bien!');
-                createConfetti();
-                createStars();
-                remainingContainer.classList.add('bounce');
-                setTimeout(() => remainingContainer.classList.remove('bounce'), 500);
-                
-            } else {
-                // Respuesta incorrecta - mostrar otra palabra del mismo tipo
-                feedback.textContent = `¡Ohhh! Fallaste 😔 (eran ${currentPair.type === 'sinonimo' ? 'sinónimos' : 'antónimos'})`;
-                feedback.className = 'feedback incorrect';
-                
-                playErrorSound();
-                speak('¡Ohhh! Fallaste. Inténtalo de nuevo');
-                createSadEmojis();
-                
-                // SUMAMOS 1 al contador (sin pasar de 100)
-                if (remaining < 100) {
-                    remaining++;
-                    document.getElementById('remaining').textContent = remaining;
-                }
-                
-                // Seleccionamos otro par del mismo tipo
-                setTimeout(() => {
-                    currentPair = getRandomPairByType(currentPair.type);
-                    document.getElementById('word1').textContent = currentPair.word1;
-                    document.getElementById('word2').textContent = currentPair.word2;
-                    document.getElementById('feedback').style.display = 'none';
-                    document.getElementById('btnSinonimo').disabled = false;
-                    document.getElementById('btnAntonimo').disabled = false;
-                }, 2500);
-                
-                return; // Salimos de la función sin avanzar
-            }
-
-            document.getElementById('remaining').textContent = remaining;
-
-            setTimeout(loadNewQuestion, 2500);
-        }
-
-        function showChampionModal() {
-            playChampionSound();
-            speak('¡Felicidades campeón! Completaste las cien preguntas. Ahora puedes reclamar tu premio');
-            createConfetti();
-            createSerpentines();
-            createStars();
-            
-            document.getElementById('rewardMessage').textContent = '🎁 ¡Tu premio: ' + rewardText + '! 🎁';
-            document.getElementById('championModal').classList.add('show');
-        }
-
-        function resetGame() {
-            remaining = 100;
-            answeredQuestions = 0;
-            usedPairs.clear();
-            
-            document.getElementById('remaining').textContent = remaining;
-            document.getElementById('championModal').classList.remove('show');
-            document.getElementById('startScreen').classList.remove('hidden');
-            document.getElementById('rewardInput').value = '';
-        }
+        const pairs = [{word1:"papá",word2:"padre",type:"sinonimo"},{word1:"mamá",word2:"madre",type:"sinonimo"},{word1:"niño",word2:"chico",type:"sinonimo"},{word1:"casa",word2:"hogar",type:"sinonimo"},{word1:"coche",word2:"auto",type:"sinonimo"},{word1:"perro",word2:"can",type:"sinonimo"},{word1:"gato",word2:"minino",type:"sinonimo"},{word1:"feliz",word2:"contento",type:"sinonimo"},{word1:"bonito",word2:"lindo",type:"sinonimo"},{word1:"grande",word2:"enorme",type:"sinonimo"},{word1:"pequeño",word2:"chico",type:"sinonimo"},{word1:"amigo",word2:"compañero",type:"sinonimo"},{word1:"regalo",word2:"obsequio",type:"sinonimo"},{word1:"libro",word2:"texto",type:"sinonimo"},{word1:"mirar",word2:"observar",type:"sinonimo"},{word1:"hablar",word2:"conversar",type:"sinonimo"},{word1:"caminar",word2:"andar",type:"sinonimo"},{word1:"comer",word2:"alimentarse",type:"sinonimo"},{word1:"saltar",word2:"brincar",type:"sinonimo"},{word1:"correr",word2:"trotar",type:"sinonimo"},{word1:"triste",word2:"apenado",type:"sinonimo"},{word1:"alegría",word2:"gozo",type:"sinonimo"},{word1:"miedo",word2:"temor",type:"sinonimo"},{word1:"comenzar",word2:"iniciar",type:"sinonimo"},{word1:"terminar",word2:"finalizar",type:"sinonimo"},{word1:"rápido",word2:"veloz",type:"sinonimo"},{word1:"hermoso",word2:"bello",type:"sinonimo"},{word1:"limpio",word2:"aseado",type:"sinonimo"},{word1:"sucio",word2:"mugriento",type:"sinonimo"},{word1:"rico",word2:"sabroso",type:"sinonimo"},{word1:"fuerte",word2:"robusto",type:"sinonimo"},{word1:"inteligente",word2:"listo",type:"sinonimo"},{word1:"valiente",word2:"corajudo",type:"sinonimo"},{word1:"enfermo",word2:"malo",type:"sinonimo"},{word1:"sano",word2:"saludable",type:"sinonimo"},{word1:"viejo",word2:"anciano",type:"sinonimo"},{word1:"joven",word2:"juvenil",type:"sinonimo"},{word1:"delgado",word2:"flaco",type:"sinonimo"},{word1:"gordo",word2:"grueso",type:"sinonimo"},{word1:"reír",word2:"carcajear",type:"sinonimo"},{word1:"llorar",word2:"sollozar",type:"sinonimo"},{word1:"tirar",word2:"lanzar",type:"sinonimo"},{word1:"coger",word2:"agarrar",type:"sinonimo"},{word1:"jugar",word2:"divertirse",type:"sinonimo"},{word1:"dormir",word2:"descansar",type:"sinonimo"},{word1:"frío",word2:"helado",type:"sinonimo"},{word1:"mojado",word2:"húmedo",type:"sinonimo"},{word1:"seco",word2:"árido",type:"sinonimo"},{word1:"fácil",word2:"simple",type:"sinonimo"},{word1:"difícil",word2:"complicado",type:"sinonimo"},{word1:"alto",word2:"bajo",type:"antonimo"},{word1:"grande",word2:"pequeño",type:"antonimo"},{word1:"día",word2:"noche",type:"antonimo"},{word1:"bueno",word2:"malo",type:"antonimo"},{word1:"bonito",word2:"feo",type:"antonimo"},{word1:"caliente",word2:"frío",type:"antonimo"},{word1:"largo",word2:"corto",type:"antonimo"},{word1:"lleno",word2:"vacío",type:"antonimo"},{word1:"limpio",word2:"sucio",type:"antonimo"},{word1:"nuevo",word2:"viejo",type:"antonimo"},{word1:"abrir",word2:"cerrar",type:"antonimo"},{word1:"subir",word2:"bajar",type:"antonimo"},{word1:"entrar",word2:"salir",type:"antonimo"},{word1:"arriba",word2:"abajo",type:"antonimo"},{word1:"dentro",word2:"fuera",type:"antonimo"},{word1:"cerca",word2:"lejos",type:"antonimo"},{word1:"rápido",word2:"lento",type:"antonimo"},{word1:"fuerte",word2:"débil",type:"antonimo"},{word1:"gordo",word2:"delgado",type:"antonimo"},{word1:"duro",word2:"blando",type:"antonimo"},{word1:"alegre",word2:"triste",type:"antonimo"},{word1:"reír",word2:"llorar",type:"antonimo"},{word1:"amor",word2:"odio",type:"antonimo"},{word1:"verdad",word2:"mentira",type:"antonimo"},{word1:"claro",word2:"oscuro",type:"antonimo"},{word1:"ruidoso",word2:"silencioso",type:"antonimo"},{word1:"fácil",word2:"difícil",type:"antonimo"},{word1:"delante",word2:"detrás",type:"antonimo"},{word1:"derecha",word2:"izquierda",type:"antonimo"},{word1:"ganar",word2:"perder",type:"antonimo"},{word1:"empezar",word2:"terminar",type:"antonimo"},{word1:"comprar",word2:"vender",type:"antonimo"},{word1:"dar",word2:"recibir",type:"antonimo"},{word1:"preguntar",word2:"responder",type:"antonimo"},{word1:"hablar",word2:"callar",type:"antonimo"},{word1:"dormir",word2:"despertar",type:"antonimo"},{word1:"mojado",word2:"seco",type:"antonimo"},{word1:"dulce",word2:"amargo",type:"antonimo"},{word1:"rico",word2:"pobre",type:"antonimo"},{word1:"pesado",word2:"ligero",type:"antonimo"},{word1:"primera",word2:"última",type:"antonimo"},{word1:"ancho",word2:"estrecho",type:"antonimo"},{word1:"temprano",word2:"tarde",type:"antonimo"},{word1:"joven",word2:"anciano",type:"antonimo"},{word1:"vivo",word2:"muerto",type:"antonimo"},{word1:"paz",word2:"guerra",type:"antonimo"},{word1:"orden",word2:"desorden",type:"antonimo"},{word1:"valiente",word2:"cobarde",type:"antonimo"},{word1:"generoso",word2:"egoísta",type:"antonimo"},{word1:"lleno",word2:"hambriento",type:"antonimo"}];
+        let remaining=100,currentPair=null,rewardText="",answeredQuestions=0,usedPairs=new Set(),correctAnswers=0,wrongAnswers=0;
+        const sinonimos=pairs.filter(p=>p.type==="sinonimo"),antonimos=pairs.filter(p=>p.type==="antonimo");
+        const AudioContext=window.AudioContext||window.webkitAudioContext,audioCtx=new AudioContext();
+        function startGame(){rewardText=document.getElementById('rewardInput').value.trim();if(!rewardText){alert('¡Por favor escribe el premio antes de empezar!');return;}document.getElementById('startScreen').classList.add('hidden');if(audioCtx.state==='suspended')audioCtx.resume();loadNewQuestion();}
+        function playSuccessSound(){[523.25,659.25,783.99].forEach((f,i)=>{setTimeout(()=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(0.3,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,audioCtx.currentTime+0.3);o.start(audioCtx.currentTime);o.stop(audioCtx.currentTime+0.3);},i*100);});}
+        function playErrorSound(){const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.setValueAtTime(400,audioCtx.currentTime);o.frequency.exponentialRampToValueAtTime(200,audioCtx.currentTime+0.5);o.type='sawtooth';g.gain.setValueAtTime(0.3,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,audioCtx.currentTime+0.5);o.start(audioCtx.currentTime);o.stop(audioCtx.currentTime+0.5);}
+        function playChampionSound(){[523.25,587.33,659.25,783.99,880.00,1046.50].forEach((f,i)=>{setTimeout(()=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(0.4,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,audioCtx.currentTime+0.4);o.start(audioCtx.currentTime);o.stop(audioCtx.currentTime+0.4);},i*150);});}
+        function speak(t){if('speechSynthesis'in window){const u=new SpeechSynthesisUtterance(t);u.lang='es-ES';u.rate=0.9;u.pitch=1.2;speechSynthesis.speak(u);}}
+        function createConfetti(){const c=document.getElementById('celebration'),clrs=['#ff6b6b','#4ecdc4','#45b7d1','#feca57','#ff9ff3','#54a0ff'];for(let i=0;i<30;i++){setTimeout(()=>{const cf=document.createElement('div');cf.className='confetti';cf.style.left=Math.random()*100+'%';cf.style.background=clrs[Math.floor(Math.random()*clrs.length)];cf.style.width='10px';cf.style.height='10px';cf.style.borderRadius=Math.random()>0.5?'50%':'0';c.appendChild(cf);setTimeout(()=>cf.remove(),2000);},i*30);}}
+        function createSerpentines(){const c=document.getElementById('celebration'),clrs=['#e74c3c','#3498db','#2ecc71','#f39c12','#9b59b6'];for(let i=0;i<50;i++){setTimeout(()=>{const s=document.createElement('div');s.className='serpentine';s.style.left=Math.random()*100+'%';s.style.width='5px';s.style.height=(Math.random()*30+20)+'px';s.style.background=clrs[Math.floor(Math.random()*clrs.length)];s.style.borderRadius='10px';c.appendChild(s);setTimeout(()=>s.remove(),2000);},i*20);}}
+        function createStars(){const c=document.getElementById('celebration');for(let i=0;i<15;i++){setTimeout(()=>{const s=document.createElement('div');s.className='star';s.textContent='⭐';s.style.left=Math.random()*100+'%';s.style.fontSize=(Math.random()*20+20)+'px';c.appendChild(s);setTimeout(()=>s.remove(),2000);},i*50);}}
+        function createSadEmojis(){const c=document.getElementById('celebration'),ems=['😢','😔','😞','💔'];for(let i=0;i<5;i++){setTimeout(()=>{const e=document.createElement('div');e.className='sad-emoji';e.textContent=ems[Math.floor(Math.random()*ems.length)];e.style.left=Math.random()*80+10+'%';e.style.top=Math.random()*50+25+'%';c.appendChild(e);setTimeout(()=>e.remove(),500);},i*100);}}
+        function getRandomPair(){if(usedPairs.size>=pairs.length)usedPairs.clear();let r;do{r=Math.floor(Math.random()*pairs.length);}while(usedPairs.has(r));usedPairs.add(r);return pairs[r];}
+        function getRandomPairByType(t){const g=t==='sinonimo'?sinonimos:antonimos,used=new Set();for(let i of usedPairs){if(pairs[i].type===t)used.add(i);}if(used.size>=g.length){for(let i of used)usedPairs.delete(i);}let r;do{r=Math.floor(Math.random()*g.length);const pi=pairs.indexOf(g[r]);if(!usedPairs.has(pi)){usedPairs.add(pi);return g[r];}}while(true);}
+        function loadNewQuestion(){if(answeredQuestions>=100){showChampionModal();return;}currentPair=getRandomPair();document.getElementById('word1').textContent=currentPair.word1;document.getElementById('word2').textContent=currentPair.word2;document.getElementById('feedback').style.display='none';document.getElementById('feedback').className='feedback';document.getElementById('btnSinonimo').disabled=false;document.getElementById('btnAntonimo').disabled=false;}
+        function checkAnswer(a){document.getElementById('btnSinonimo').disabled=true;document.getElementById('btnAntonimo').disabled=true;const f=document.getElementById('feedback'),rc=document.getElementById('remainingContainer');if(a===currentPair.type){answeredQuestions++;remaining--;correctAnswers++;document.getElementById('correctCount').textContent=correctAnswers;f.textContent='¡Correcto! 🎉';f.className='feedback correct';playSuccessSound();speak('¡Correcto! ¡Muy bien!');createConfetti();createStars();rc.classList.add('bounce');setTimeout(()=>rc.classList.remove('bounce'),500);}else{wrongAnswers++;document.getElementById('wrongCount').textContent=wrongAnswers;f.textContent=`¡Ohhh! Fallaste 😔 (eran ${currentPair.type==='sinonimo'?'sinónimos':'antónimos'})`;f.className='feedback incorrect';playErrorSound();speak('¡Ohhh! Fallaste. Inténtalo de nuevo');createSadEmojis();if(remaining<100){remaining++;document.getElementById('remaining').textContent=remaining;}setTimeout(()=>{currentPair=getRandomPairByType(currentPair.type);document.getElementById('word1').textContent=currentPair.word1;document.getElementById('word2').textContent=currentPair.word2;document.getElementById('feedback').style.display='none';document.getElementById('btnSinonimo').disabled=false;document.getElementById('btnAntonimo').disabled=false;},2500);return;}document.getElementById('remaining').textContent=remaining;setTimeout(loadNewQuestion,2500);}
+        function showChampionModal(){playChampionSound();speak('¡Felicidades campeón! Completaste las cien preguntas. Ahora puedes reclamar tu premio');createConfetti();createSerpentines();createStars();document.getElementById('rewardMessage').textContent='🎁 ¡Tu premio: '+rewardText+'! 🎁';document.getElementById('championModal').classList.add('show');}
+        function resetGame(){remaining=100;answeredQuestions=0;usedPairs.clear();correctAnswers=0;wrongAnswers=0;document.getElementById('remaining').textContent=remaining;document.getElementById('correctCount').textContent=0;document.getElementById('wrongCount').textContent=0;document.getElementById('championModal').classList.remove('show');document.getElementById('startScreen').classList.remove('hidden');document.getElementById('rewardInput').value='';}
     </script>
 </body>
 </html>
